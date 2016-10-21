@@ -12,17 +12,22 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.GraphRequestBatch;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
+    private ArrayList<FacebookEvent> event_ids;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,33 +46,50 @@ public class MainActivity extends AppCompatActivity {
                 AccessToken accessToken = loginResult.getAccessToken();
                 String sId = accessToken.getUserId();
                 Log.d("BUDDY","Victory! " + sId);
-                new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        "/" + sId + "/friends",
-                        null,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-                                try
-                                {
-                                    JSONObject jo = response.getJSONObject();
-                                    int nFriends = response.getJSONObject().getJSONObject("summary").getInt("total_count");
-                                    Toast toast = Toast.makeText(getApplicationContext(),
-                                            "You have " + Integer.toString(nFriends) + "friends ", Toast.LENGTH_LONG);
-                                    toast.show();
-                                }
-                                catch(JSONException je)
-                                {
-                                    Toast toast = Toast.makeText(getApplicationContext(),
-                                            "Error getting friends", Toast.LENGTH_LONG);
-                                    toast.show();
+                GraphRequestBatch batch = new GraphRequestBatch(
+                        GraphRequest.newMyFriendsRequest(accessToken,
+                                new GraphRequest.GraphJSONArrayCallback() {
+                                    @Override
+                                    public void onCompleted(JSONArray objects, GraphResponse response) {
+                                        Log.d("BUDDY", "Friend request");
+                                    }
+                                }),
+                        new GraphRequest(
+                                accessToken,
+                                "/"+sId+"/events",
+                                null,
+                                HttpMethod.GET,
+                                new GraphRequest.Callback() {
+                                    public void onCompleted(GraphResponse response) {
+            /* handle the result */     Log.d("BUDDY","Event Request");
+                                        event_ids = new ArrayList<FacebookEvent>();
+                                        try {
+                                            JSONObject jo = response.getJSONObject();
+                                            JSONArray ja = jo.getJSONArray("data");
+                                            for(int i=0; i < 5; i ++)
+                                            {
+                                                JSONObject o = ja.getJSONObject(i);
+                                                int id = o.getInt("id");
+                                                String name = o.getString("name");
+                                                FacebookEvent fe = new FacebookEvent(id,name);
+                                                event_ids.add(fe);
+                                            }
+                                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                                            intent.putParcelableArrayListExtra("events", event_ids);
+                                            startActivity(intent);
+
+                                        }
+                                        catch(JSONException je)
+                                        {
+
+                                        }
+
+                                    }
                                 }
 
-
-            /* handle the result */
-                            }
-                        }
-                ).executeAsync();
+                        )
+                );
+                batch.executeAsync();
                 // App code
             }
 
@@ -86,5 +108,6 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+
     }
 }
