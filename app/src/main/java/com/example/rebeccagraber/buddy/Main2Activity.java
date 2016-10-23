@@ -15,10 +15,10 @@ public class Main2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
         Intent i = getIntent();
         Bundle b = i.getExtras();
-        ArrayList<FacebookEvent> facebookEventArrayList = b.getParcelableArrayList("events");
+        ArrayList<FacebookEvent> facebookEventArrayList = b.getParcelableArrayList("EVENTS");
         for(FacebookEvent fe: facebookEventArrayList)
         {
-            Log.d("BUDDYTAG", fe.getName());
+            Log.d("BUDDY", fe.getName());
         }
     }
 }

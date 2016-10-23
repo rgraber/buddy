@@ -1,6 +1,8 @@
 package com.example.rebeccagraber.buddy;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private ArrayList<FacebookEvent> event_ids;
+    private ArrayList<FacebookFriend> friend_ids;
+    private Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setReadPermissions("email");
         loginButton.setReadPermissions("user_friends");
         loginButton.setReadPermissions("user_events");
+        event_ids = new ArrayList<FacebookEvent>();
+        friend_ids = new ArrayList<FacebookFriend>();
+        context = this.getBaseContext();
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -47,11 +55,31 @@ public class MainActivity extends AppCompatActivity {
                 String sId = accessToken.getUserId();
                 Log.d("BUDDY","Victory! " + sId);
                 GraphRequestBatch batch = new GraphRequestBatch(
-                        GraphRequest.newMyFriendsRequest(accessToken,
-                                new GraphRequest.GraphJSONArrayCallback() {
+                        new GraphRequest(accessToken,
+                                "/" + sId + "/friends",
+                                null,
+                                HttpMethod.GET,
+                                new GraphRequest.Callback() {
                                     @Override
-                                    public void onCompleted(JSONArray objects, GraphResponse response) {
+                                    public void onCompleted(GraphResponse response) {
                                         Log.d("BUDDY", "Friend request");
+                                        try {
+                                            JSONObject jo = response.getJSONObject();
+                                            JSONArray ja = jo.getJSONArray("data");
+                                            int size = ja.length();
+                                            int max = Math.min(5, size);
+                                            for (int i = 0; i < max; i++) {
+                                                JSONObject o = ja.getJSONObject(i);
+                                                int id = o.getInt("id");
+                                                String name = o.getString("first_name") + " " +
+                                                        o.getString("last_name");
+                                                FacebookFriend ff = new FacebookFriend(id, name);
+                                                friend_ids.add(ff);
+                                            }
+                                        }catch(JSONException je)
+                                        {
+                                            Log.e("BUDDY", "Error parsing friend list!");
+                                        }
                                     }
                                 }),
                         new GraphRequest(
@@ -62,11 +90,12 @@ public class MainActivity extends AppCompatActivity {
                                 new GraphRequest.Callback() {
                                     public void onCompleted(GraphResponse response) {
             /* handle the result */     Log.d("BUDDY","Event Request");
-                                        event_ids = new ArrayList<FacebookEvent>();
                                         try {
                                             JSONObject jo = response.getJSONObject();
                                             JSONArray ja = jo.getJSONArray("data");
-                                            for(int i=0; i < 5; i ++)
+                                            int size = ja.length();
+                                            int max = Math.min(5,size);
+                                            for(int i=0; i < max; i ++)
                                             {
                                                 JSONObject o = ja.getJSONObject(i);
                                                 int id = o.getInt("id");
@@ -74,20 +103,29 @@ public class MainActivity extends AppCompatActivity {
                                                 FacebookEvent fe = new FacebookEvent(id,name);
                                                 event_ids.add(fe);
                                             }
-                                            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-                                            intent.putParcelableArrayListExtra("events", event_ids);
-                                            startActivity(intent);
 
                                         }
                                         catch(JSONException je)
                                         {
-
+                                            Log.e("BUDDY", "Error in parsing JSON!");
                                         }
-
-                                    }
+                                      }
                                 }
 
                         )
+                );
+                batch.addCallback(new GraphRequestBatch.Callback()
+                {
+                    @Override
+                    public void onBatchCompleted(GraphRequestBatch graphRequests) {
+                        Intent i = new Intent(context, Main2Activity.class);
+                        i.putParcelableArrayListExtra("EVENTS", event_ids);
+                        i.putParcelableArrayListExtra("FRIENDS", friend_ids);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(i);
+                    }
+                }
+
                 );
                 batch.executeAsync();
                 // App code
@@ -110,4 +148,5 @@ public class MainActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
 
     }
+
 }
