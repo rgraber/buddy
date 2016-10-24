@@ -31,15 +31,15 @@ public class FacebookFriend implements Parcelable {
         name = in.readString();
     }
 
-    public static final Creator<FacebookEvent> CREATOR = new Creator<FacebookEvent>() {
+    public static final Creator<FacebookFriend> CREATOR = new Creator<FacebookFriend>() {
         @Override
-        public FacebookEvent createFromParcel(Parcel in) {
-            return new FacebookEvent(in);
+        public FacebookFriend createFromParcel(Parcel in) {
+            return new FacebookFriend(in);
         }
 
         @Override
-        public FacebookEvent[] newArray(int size) {
-            return new FacebookEvent[size];
+        public FacebookFriend[] newArray(int size) {
+            return new FacebookFriend[size];
         }
     };
 

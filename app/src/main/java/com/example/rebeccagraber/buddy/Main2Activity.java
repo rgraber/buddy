@@ -16,7 +16,12 @@ public class Main2Activity extends AppCompatActivity {
         Intent i = getIntent();
         Bundle b = i.getExtras();
         ArrayList<FacebookEvent> facebookEventArrayList = b.getParcelableArrayList("EVENTS");
+        ArrayList<FacebookFriend> facebookFriends = b.getParcelableArrayList("FRIENDS");
         for(FacebookEvent fe: facebookEventArrayList)
+        {
+            Log.d("BUDDY", fe.getName());
+        }
+        for(FacebookFriend fe: facebookFriends)
         {
             Log.d("BUDDY", fe.getName());
         }

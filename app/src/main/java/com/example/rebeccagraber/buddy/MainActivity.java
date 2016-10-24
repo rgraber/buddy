@@ -39,114 +39,111 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-        setContentView(R.layout.activity_main);
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email");
-        loginButton.setReadPermissions("user_friends");
-        loginButton.setReadPermissions("user_events");
         event_ids = new ArrayList<FacebookEvent>();
         friend_ids = new ArrayList<FacebookFriend>();
         context = this.getBaseContext();
 
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                AccessToken accessToken = loginResult.getAccessToken();
-                String sId = accessToken.getUserId();
-                Log.d("BUDDY","Victory! " + sId);
-                GraphRequestBatch batch = new GraphRequestBatch(
-                        new GraphRequest(accessToken,
-                                "/" + sId + "/friends",
-                                null,
-                                HttpMethod.GET,
-                                new GraphRequest.Callback() {
-                                    @Override
-                                    public void onCompleted(GraphResponse response) {
-                                        Log.d("BUDDY", "Friend request");
-                                        try {
-                                            JSONObject jo = response.getJSONObject();
-                                            JSONArray ja = jo.getJSONArray("data");
-                                            int size = ja.length();
-                                            int max = Math.min(5, size);
-                                            for (int i = 0; i < max; i++) {
-                                                JSONObject o = ja.getJSONObject(i);
-                                                int id = o.getInt("id");
-                                                String name = o.getString("first_name") + " " +
-                                                        o.getString("last_name");
-                                                FacebookFriend ff = new FacebookFriend(id, name);
-                                                friend_ids.add(ff);
+            setContentView(R.layout.activity_main);
+            loginButton = (LoginButton) findViewById(R.id.login_button);
+            loginButton.setReadPermissions("email");
+            loginButton.setReadPermissions("user_friends");
+            loginButton.setReadPermissions("user_events");
+
+
+            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    AccessToken accessToken = loginResult.getAccessToken();
+                    String sId = accessToken.getUserId();
+                    Log.d("BUDDY", "Victory! " + sId);
+                    GraphRequestBatch batch = new GraphRequestBatch(
+                            new GraphRequest(accessToken,
+                                    "/" + sId + "/friends",
+                                    null,
+                                    HttpMethod.GET,
+                                    new GraphRequest.Callback() {
+                                        @Override
+                                        public void onCompleted(GraphResponse response) {
+                                            Log.d("BUDDY", "Friend request");
+                                            try {
+                                                JSONObject jo = response.getJSONObject();
+                                                JSONArray ja = jo.getJSONArray("data");
+                                                int size = ja.length();
+                                                int max = Math.min(5, size);
+                                                for (int i = 0; i < max; i++) {
+                                                    JSONObject o = ja.getJSONObject(i);
+                                                    int id = o.getInt("id");
+                                                    String name = o.getString("name");
+                                                    FacebookFriend ff = new FacebookFriend(id, name);
+                                                    friend_ids.add(ff);
+                                                }
+                                            } catch (JSONException je) {
+                                                Log.e("BUDDY", "Error parsing friend list!");
                                             }
-                                        }catch(JSONException je)
-                                        {
-                                            Log.e("BUDDY", "Error parsing friend list!");
+                                        }
+                                    }),
+                            new GraphRequest(
+                                    accessToken,
+                                    "/" + sId + "/events",
+                                    null,
+                                    HttpMethod.GET,
+                                    new GraphRequest.Callback() {
+                                        public void onCompleted(GraphResponse response) {
+            /* handle the result */
+                                            Log.d("BUDDY", "Event Request");
+                                            try {
+                                                JSONObject jo = response.getJSONObject();
+                                                JSONArray ja = jo.getJSONArray("data");
+                                                int size = ja.length();
+                                                int max = Math.min(5, size);
+                                                for (int i = 0; i < max; i++) {
+                                                    JSONObject o = ja.getJSONObject(i);
+                                                    int id = o.getInt("id");
+                                                    String name = o.getString("name");
+                                                    FacebookEvent fe = new FacebookEvent(id, name);
+                                                    event_ids.add(fe);
+                                                }
+
+                                            } catch (JSONException je) {
+                                                Log.e("BUDDY", "Error in parsing JSON!");
+                                            }
                                         }
                                     }
-                                }),
-                        new GraphRequest(
-                                accessToken,
-                                "/"+sId+"/events",
-                                null,
-                                HttpMethod.GET,
-                                new GraphRequest.Callback() {
-                                    public void onCompleted(GraphResponse response) {
-            /* handle the result */     Log.d("BUDDY","Event Request");
-                                        try {
-                                            JSONObject jo = response.getJSONObject();
-                                            JSONArray ja = jo.getJSONArray("data");
-                                            int size = ja.length();
-                                            int max = Math.min(5,size);
-                                            for(int i=0; i < max; i ++)
-                                            {
-                                                JSONObject o = ja.getJSONObject(i);
-                                                int id = o.getInt("id");
-                                                String name = o.getString("name");
-                                                FacebookEvent fe = new FacebookEvent(id,name);
-                                                event_ids.add(fe);
-                                            }
 
-                                        }
-                                        catch(JSONException je)
-                                        {
-                                            Log.e("BUDDY", "Error in parsing JSON!");
-                                        }
+                            )
+                    );
+                    batch.addCallback(new GraphRequestBatch.Callback() {
+                                          @Override
+                                          public void onBatchCompleted(GraphRequestBatch graphRequests) {
+                                              Intent i = new Intent(context, Main2Activity.class);
+                                              i.putParcelableArrayListExtra("EVENTS", event_ids);
+                                              i.putParcelableArrayListExtra("FRIENDS", friend_ids);
+                                              i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                              context.startActivity(i);
+                                          }
                                       }
-                                }
 
-                        )
-                );
-                batch.addCallback(new GraphRequestBatch.Callback()
-                {
-                    @Override
-                    public void onBatchCompleted(GraphRequestBatch graphRequests) {
-                        Intent i = new Intent(context, Main2Activity.class);
-                        i.putParcelableArrayListExtra("EVENTS", event_ids);
-                        i.putParcelableArrayListExtra("FRIENDS", friend_ids);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(i);
-                    }
+                    );
+                    batch.executeAsync();
+                    // App code
                 }
 
-                );
-                batch.executeAsync();
-                // App code
-            }
+                @Override
+                public void onCancel() {
+                    // App code
+                }
 
-            @Override
-            public void onCancel() {
-                // App code
-            }
+                @Override
+                public void onError(FacebookException exception) {
+                    // App code
+                }
+            });
+        }
 
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-            }
-        });
-    }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult ( int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-
     }
 
 }
