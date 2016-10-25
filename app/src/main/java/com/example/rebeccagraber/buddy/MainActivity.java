@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                                                 int max = Math.min(5, size);
                                                 for (int i = 0; i < max; i++) {
                                                     JSONObject o = ja.getJSONObject(i);
-                                                    int id = o.getInt("id");
+                                                    String id = o.getString("id");
                                                     String name = o.getString("name");
                                                     FacebookEvent fe = new FacebookEvent(id, name);
                                                     event_ids.add(fe);

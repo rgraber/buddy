@@ -61,7 +61,7 @@ public class Main2Activity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                int eid = facebookEventArrayList.get(position).getID();
+                String eid = facebookEventArrayList.get(position).getID();
 
                 ShareLinkContent content = new ShareLinkContent.Builder()
                         .setContentUrl(Uri.parse("https://facebook.com/events/"+ eid))

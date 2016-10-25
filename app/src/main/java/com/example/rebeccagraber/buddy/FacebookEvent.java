@@ -8,9 +8,9 @@ import android.os.Parcelable;
  */
 
 public class FacebookEvent implements Parcelable {
-    private int ID;
+    private String ID;
     private String name;
-    public FacebookEvent(int nID, String sname)
+    public FacebookEvent( String nID, String sname)
     {
         ID = nID;
         name = sname;
@@ -19,7 +19,7 @@ public class FacebookEvent implements Parcelable {
 
     public FacebookEvent(Parcel in)
     {
-        ID = in.readInt();
+        ID = in.readString();
         name = in.readString();
     }
 
@@ -35,7 +35,7 @@ public class FacebookEvent implements Parcelable {
         }
     };
 
-    public int getID()
+    public String getID()
     {
         return ID;
     }
@@ -54,7 +54,7 @@ public class FacebookEvent implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(ID);
+        dest.writeString(ID);
         dest.writeString(name);
     }
 }
