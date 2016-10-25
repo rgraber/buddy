@@ -11,11 +11,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.rebeccagraber.buddy.Main2Activity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Friends list:"
+        android:id="@+id/tvFriends" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:id="@+id/lvFriends"
         android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event list:"
+        android:id="@+id/tvEvents" />
 
     <ListView
         android:layout_width="match_parent"

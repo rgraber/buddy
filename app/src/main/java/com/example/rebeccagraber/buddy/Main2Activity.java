@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.LikeView;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 public class Main2Activity extends AppCompatActivity {
     private ListView lvFriends;
     private ListView lvEvents;
+    private TextView tvFriends;
+    private TextView tvEvents;
 
     private ArrayList friends;
     private ArrayList events;
@@ -32,6 +35,8 @@ public class Main2Activity extends AppCompatActivity {
 
         lvFriends = (ListView) findViewById(R.id.lvFriends);
         lvEvents = (ListView) findViewById(R.id.lvEvents);
+        tvEvents = (TextView) findViewById(R.id.tvEvents);
+        tvFriends = (TextView) findViewById(R.id.tvFriends);
 
 
         friends = new ArrayList();
