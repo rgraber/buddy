@@ -20,10 +20,9 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="166dp"
         android:id="@+id/lvFriends"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1" />
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,15 +33,14 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:id="@+id/lvEvents"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1" />
+        android:layout_gravity="center_horizontal" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1">
 
         <Button
@@ -59,5 +57,11 @@
             android:layout_weight="1"
             android:id="@+id/btnSend" />
     </LinearLayout>
+
+    <com.facebook.share.widget.LikeView
+        android:id="@+id/likeView"
+        android:layout_width = "wrap_content"
+        android:layout_height= "wrap_content"/>
+
 
 </LinearLayout>

@@ -36,6 +36,7 @@ public class Main2Activity extends AppCompatActivity {
     private ArrayList events;
     private CallbackManager cm;
     private String chosenId;
+    private LikeView likeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,12 @@ public class Main2Activity extends AppCompatActivity {
         lvEvents = (ListView) findViewById(R.id.lvEvents);
         tvEvents = (TextView) findViewById(R.id.tvEvents);
         tvFriends = (TextView) findViewById(R.id.tvFriends);
+        likeView = (LikeView) findViewById(R.id.likeView);
+        likeView.setLikeViewStyle(LikeView.Style.STANDARD);
+        likeView.setAuxiliaryViewPosition(LikeView.AuxiliaryViewPosition.INLINE);
+        likeView.setObjectIdAndType(
+                "https://www.facebook.com/FacebookDevelopers",
+                LikeView.ObjectType.PAGE);
 
 
         friends = new ArrayList();
