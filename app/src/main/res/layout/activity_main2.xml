@@ -15,23 +15,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Friends list:"
-        android:id="@+id/tvFriends" />
+        android:id="@+id/tvFriends"
+        android:layout_weight="2" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:id="@+id/lvFriends"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Event list:"
-        android:id="@+id/tvEvents" />
+        android:id="@+id/tvEvents"
+        android:layout_weight="2" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/lvEvents"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <Button
+            android:text="Share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnShare"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="Send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/btnSend" />
+    </LinearLayout>
+
 </LinearLayout>

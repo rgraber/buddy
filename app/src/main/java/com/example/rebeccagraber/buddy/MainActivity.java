@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
         friend_ids = new ArrayList<FacebookFriend>();
         context = this.getBaseContext();
 
-            setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+
             loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions("email");
             loginButton.setReadPermissions("user_friends");
@@ -161,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
 
     @Override
     public void onActivityResult ( int requestCode, int resultCode, Intent data){
