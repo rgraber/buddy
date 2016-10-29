@@ -32,9 +32,15 @@ public class Main2Activity extends AppCompatActivity {
     private Button btnSend;
     private Button btnShare;
 
+    // for ListView
     private ArrayList friends;
     private ArrayList events;
+
+
+    // for click on events list
     private CallbackManager cm;
+
+
     private String chosenId;
     private LikeView likeView;
 
@@ -44,6 +50,7 @@ public class Main2Activity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_main2);
+        // binding
         btnSend = (Button) findViewById(R.id.btnSend);
         btnShare = (Button) findViewById(R.id.btnShare);
 
@@ -56,6 +63,8 @@ public class Main2Activity extends AppCompatActivity {
         likeView = (LikeView) findViewById(R.id.likeView);
         likeView.setLikeViewStyle(LikeView.Style.STANDARD);
         likeView.setAuxiliaryViewPosition(LikeView.AuxiliaryViewPosition.INLINE);
+
+        // like link button
         likeView.setObjectIdAndType(
                 "https://www.facebook.com/FacebookDevelopers",
                 LikeView.ObjectType.PAGE);
@@ -65,6 +74,8 @@ public class Main2Activity extends AppCompatActivity {
         events = new ArrayList();
         Intent i = getIntent();
         Bundle b = i.getExtras();
+
+        // retrieve events and friends from intent i with bundle
         final ArrayList<FacebookEvent> facebookEventArrayList = b.getParcelableArrayList("EVENTS");
         final ArrayList<FacebookFriend> facebookFriends = b.getParcelableArrayList("FRIENDS");
         for (FacebookEvent fe : facebookEventArrayList) {
@@ -76,22 +87,26 @@ public class Main2Activity extends AppCompatActivity {
             friends.add(fe.getName());
         }
 
+
+        // set ListView Adapters
         ArrayAdapter<ArrayList> fAdapter = new ArrayAdapter<ArrayList>(this, android.R.layout.simple_list_item_1, friends);
         ArrayAdapter<ArrayList> eAdapter = new ArrayAdapter<ArrayList>(this, android.R.layout.simple_expandable_list_item_1, events);
         lvFriends.setAdapter(fAdapter);
         lvEvents.setAdapter(eAdapter);
 
 
+        // listen to click on events list
         lvEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 String eid = facebookEventArrayList.get(position).getID();
                 chosenId = eid;
 
             }
         });
 
+
+        // send link to friend button
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +118,7 @@ public class Main2Activity extends AppCompatActivity {
 
             }
         });
+        // share link to facebook page button
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

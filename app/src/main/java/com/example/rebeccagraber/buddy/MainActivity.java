@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
 
+        // initial
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "com.example.rebeccagraber.buddy",
@@ -61,12 +62,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         callbackManager = CallbackManager.Factory.create();
+
+        // two objects (event and friend) lists
         event_ids = new ArrayList<FacebookEvent>();
         friend_ids = new ArrayList<FacebookFriend>();
         context = this.getBaseContext();
 
         setContentView(R.layout.activity_main);
 
+
+        // facebook login button set permission
             loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions("email");
             loginButton.setReadPermissions("user_friends");
@@ -75,10 +80,12 @@ public class MainActivity extends AppCompatActivity {
 
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
+                // get permission
                 public void onSuccess(LoginResult loginResult) {
                     AccessToken accessToken = loginResult.getAccessToken();
                     String sId = accessToken.getUserId();
                     Log.d("BUDDY", "Victory! " + sId);
+                    // Graph Request
                     GraphRequestBatch batch = new GraphRequestBatch(
                             new GraphRequest(accessToken,
                                     "/" + sId + "/friends",
@@ -88,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void onCompleted(GraphResponse response) {
                                             Log.d("BUDDY", "Friend request");
+                                            // add friends to friend object list
                                             try {
                                                 JSONObject jo = response.getJSONObject();
                                                 JSONArray ja = jo.getJSONArray("data");
@@ -106,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }),
                             new GraphRequest(
+                                    // Graph Request
                                     accessToken,
                                     "/" + sId + "/events",
                                     null,
@@ -114,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                                         public void onCompleted(GraphResponse response) {
             /* handle the result */
                                             Log.d("BUDDY", "Event Request");
+                                            // add events to event object list
                                             try {
                                                 JSONObject jo = response.getJSONObject();
                                                 JSONArray ja = jo.getJSONArray("data");
@@ -135,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
                             )
                     );
+                    // pass events and friends to next activity
                     batch.addCallback(new GraphRequestBatch.Callback() {
                                           @Override
                                           public void onBatchCompleted(GraphRequestBatch graphRequests) {
